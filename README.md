@@ -48,8 +48,8 @@ and then just handle the routes
 
 ```js
 function getUser(req, res) {     // GET '/api/user/1?key=2&edit'
-  console.log(req.params);          // {id: '2'}
-  console.log(req.query);           // {key: '3', edit: ''}
+  console.log(req.params);       // {id: '2'}
+  console.log(req.query);        // {key: '3', edit: ''}
 }
 
 function deleteUser(req, res) {  // DELETE '/api/user/5'
@@ -66,7 +66,7 @@ function getIndex(req, res) {}   // GET '/'
 
 function elseIndex(req, res) {}  // "any other method" '/'
 
-function handle404(req, res) {}  // "all metohds" all other requests
+function handle404(req, res) {}  // "all methods" all other requests
 ```
 
 You can call `router(newRouteList)` whenever you want to change the routes to new ones
