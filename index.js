@@ -109,9 +109,4 @@ const onNewRoutes = newRoutes => {
 
 const justRouter = (req, res) => (res === undefined ? onNewRoutes : onRequest)(req, res);
 
-Object.defineProperty(justRouter, 'routes', {
-	get: () => routeMap,
-	set: onNewRoutes
-});
-
 module.exports = justRouter;

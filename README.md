@@ -13,10 +13,12 @@ http.createServer(router({
 ## Installation
 
 ```bash
-$ npm install just-router
+🍄 npm i just-router
 ```
 
 ## Examples
+
+Create routelist and add it to router like this
 
 ```js
 http.createServer(router({
@@ -26,7 +28,25 @@ http.createServer(router({
   '/':             {get: getIndex, other: elseIndex},
   '':              handle404
 })).listen(80);
+```
 
+or like this
+
+```js
+router({
+  '/api/user/:id': {get: getUser, delete: deleteUser},
+  '/api/user':     {post: createUser},
+  '/src/:file':    {get: getStatic},
+  '/':             {get: getIndex, other: elseIndex},
+  '':              handle404
+});
+
+http.createServer(router).listen(80);
+```
+
+and then just handle the routes
+
+```js
 function getUser(req, res) {     // GET '/api/user/1?key=2&edit'
   console.log(req.params);          // {id: '2'}
   console.log(req.query);           // {key: '3', edit: ''}
@@ -49,4 +69,75 @@ function elseIndex(req, res) {}  // "any other method" '/'
 function handle404(req, res) {}  // "all metohds" all other requests
 ```
 
-Documentation will be soon. To be continued... :)
+You can call `router(newRouteList)` whenever you want to change the routes to new ones
+
+## Documentation
+
+### Initialisation
+
+```js
+const router = require('just-router');
+```
+
+### router
+
+`router` can be called with 1 or 2 arguments:
+- `router(routeList)`
+  - accepts `routeList`
+  - returns `router` which is waiting for 2 arguments
+- `router(req, res)`
+  - accepts `req` and `res` from server's request
+
+### routeList
+
+`routeList` is a simple object with routes
+
+```js
+let routeList = {
+	route: routeHandleFunction,
+	route2: routeHandleObject
+}
+```
+
+### route
+
+`route` is an path template, which can include `:variables`
+
+`/user/:userId/messages/:messageId` this `route` will match
+- `/user/1/messages/2`
+- `/user/Morty/messages/lol?token=777&debugMode`
+- but **NOT** `/user/1/messages` and `/user/1/2/messages/3`
+
+#### Special routes
+
+- `'/'` is a "root route"
+- `''` is an "others route" that catches all requests that did not match before
+
+`:variables` and `?search=string&values` can be found in `req.params` and `req.query` objects in `routeHandleFunction`
+
+### routeHandleFunction and routeHandleObject
+
+- `route: routeHandleFunction`
+  - it handles all request methods
+- `route: routeHandleObject`
+```js
+let routeHandleObject = {
+	get: routeHandleFunction,
+	post: routeHandleFunction2,
+	other: routeHandleFunction3    // aliases: all || any || _
+}
+
+function routeHandleFunction(req, res) {}
+```
+  - it handles requests by their methods. If the methods do not match, then the `other` routeHandleFunction is called. `other` keyword has aliases: `all`, `any` and `_`
+
+## Philosophy
+
+`just-router`
+- is tiny and probably quickest
+- is NOT overloaded with additional functionality
+- has simple one-method syntax
+- has simple and beautiful `routeList`
+- takes care of your `node_modules` size
+- has no dependencies
+- 🍄
