@@ -4,7 +4,9 @@ let routeMap = {};
 let rootRoute;
 let othersRoute;
 
-const makeQuery = search => {
+const makeQuery = (search, req) => {
+	if (req.query !== undefined) return;
+
 	let query = {};
 
 	if (search !== undefined) {
@@ -23,7 +25,7 @@ const makeQuery = search => {
 		}
 	}
 
-	return query;
+	req.query = query;
 };
 
 const getCallbackByMethod = (foundCallback, req) => {
@@ -39,7 +41,7 @@ const getCallbackByMethod = (foundCallback, req) => {
 const onRequest = (req, res) => {
 	let [path, search] = req.url.match(/[^?]+/g);
 
-	req.query = makeQuery(search);
+	makeQuery(search, req);
 
 	let foundRoute;
 	let foundParams = {};
