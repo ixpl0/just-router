@@ -20,34 +20,33 @@ $ npm install just-router
 
 ```js
 http.createServer(router({
-
-  '/user/:userId/message/:messageId': {
-    get: getMessage,                // Matches 'GET' request '/user/1/message/2?key=11&editMode'
-    post: updateMessage,            // Matches 'POST' request '/user/a007/message/911'
-    other: handleMessage            // Matches other request methods
-  },                                // You can use 'any', 'all', or '_' keywords instead of 'other'
-
-  '/': handleIndex,
-
-  '': handle404                     // "Empty string route" catches all other requests
-
+  '/api/user/:id': {get: getUser, delete: deleteUser},
+  '/api/user':     {post: createUser},
+  '/src/:file':    {get: getStatic},
+  '/':             {get: getIndex, other: elseIndex},
+  '':              handle404
 })).listen(80);
 
-
-function getMessage(req, res) {     // '/user/1/message/2?key=11&editMode'
-  console.log(req.params);          // {userId: '1', messageId: '2'}
-  console.log(req.query);           // {key: '11', editMode: ''}
+function getUser(req, res) {     // GET '/api/user/1?key=2&edit'
+  console.log(req.params);          // {id: '2'}
+  console.log(req.query);           // {key: '3', edit: ''}
 }
 
-function postMessage(req, res) {    // '/user/a007/message/911'
-  console.log(req.params);          // {userId: 'a007', messageId: '911'}
+function deleteUser(req, res) {  // DELETE '/api/user/5'
+  console.log(req.params);       // {id: '5'}
 }
 
-function handleMessage(req, res) {} // Matches other request methods with '/user/a/message/b'
+function createUser(req, res) {} // POST '/api/message'
 
-function handleIndex(req, res) {}   // Matches '/' request with any method used
+function getStatic(req, res) {   // GET '/src/logo.png'
+  console.log(req.params);       // {file: 'logo.png'}
+}
 
-function handle404(req, res) {}     // Matches all other requests
+function getIndex(req, res) {}   // GET '/'
+
+function elseIndex(req, res) {}  // "any other method" '/'
+
+function handle404(req, res) {}  // "all metohds" all other requests
 ```
 
 Documentation will be soon. To be continued... :)
