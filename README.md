@@ -24,7 +24,7 @@ Create routelist and add it to router like this
 http.createServer(router({
   '/api/user/:id': {get: getUser, delete: deleteUser},
   '/api/user':     {post: createUser},
-  '/src/:file':    {get: getStatic},
+  '/src/::file':   {get: getStatic},
   '/':             {get: getIndex, other: elseIndex},
   '':              handle404
 })).listen(80);
@@ -36,7 +36,7 @@ or like this
 router({
   '/api/user/:id': {get: getUser, delete: deleteUser},
   '/api/user':     {post: createUser},
-  '/src/:file':    {get: getStatic},
+  '/src/::file':   {get: getStatic},
   '/':             {get: getIndex, other: elseIndex},
   '':              handle404
 });
@@ -58,8 +58,8 @@ function deleteUser(req, res) {  // DELETE '/api/user/5'
 
 function createUser(req, res) {} // POST '/api/message'
 
-function getStatic(req, res) {   // GET '/src/logo.png'
-  console.log(req.params);       // {file: 'logo.png'}
+function getStatic(req, res) {   // GET '/src/js/app.js'
+  console.log(req.params);       // {file: '/js/app.js'}
 }
 
 function getIndex(req, res) {}   // GET '/'
@@ -101,35 +101,40 @@ let routeList = {
 
 ### route
 
-`route` is an path template, which can include `:variables`
+`route` is a path template, which can **include** `:variables` or **ends** by `::pathEnding`
 
-`/user/:userId/messages/:messageId` this `route` will match
-- `/user/1/messages/2`
+`/user/:userId/messages/:messageId` will match
+- `/user/1/messages/2` and `req.params` will be `{userId: '1', messageId: '2'}`
 - `/user/Morty/messages/lol?token=777&debugMode`
 - but **NOT** `/user/1/messages` and `/user/1/2/messages/3`
 
+`/src/::filePath` will match
+- `/src/img/logo.png` and `req.params` will be `{filePath: '/img/logo.png'}`
+- `/src/templates/widget/header.pug`
+
 #### Special routes
 
-- `'/'` is a "root route"
-- `''` is an "others route" that catches all requests that did not match before
+- `'/'` is the "root route"
+- `''` is the "others route" that catches all requests that did not match before
 
-`:variables` and `?search=string&values` can be found in `req.params` and `req.query` objects in `routeHandleFunction`
+`:variables`/`::pathEndings` and `?search=string&values` can be found in `req.params` and `req.query` objects respectively
+
+`::pathEndings` values​start with the '/' character, and the `:variables` values​are not
 
 ### routeHandleFunction and routeHandleObject
 
-- `route: routeHandleFunction`
-  - it handles all request methods
-- `route: routeHandleObject`
+- `route: routeHandleFunction` handles ALL request methods
+- `route: routeHandleObject` is an object whose keys are the names of the request methods or universal key 'other'. Its values are `routeHandleFunctions`
 ```js
 let routeHandleObject = {
 	get: routeHandleFunction,
 	post: routeHandleFunction2,
-	other: routeHandleFunction3    // aliases: all || any || _
+	other: routeHandleFunction3    // aliases: all || any || else || _
 }
 
 function routeHandleFunction(req, res) {}
 ```
-  - it handles requests by their methods. If the methods do not match, then the `other` routeHandleFunction is called. `other` keyword has aliases: `all`, `any` and `_`
+If the methods did not match, then the `other` `routeHandleFunction` is called. `other` keyword has aliases: `all`, `any`, `else` and `_`
 
 ## Philosophy
 

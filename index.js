@@ -30,7 +30,8 @@ const makeQuery = (search, req) => {
 
 const getCallbackByMethod = (foundCallback, req) => {
 	if (typeof foundCallback === 'object') {
-		let foundCallbackMethod = foundCallback[req.method.toLowerCase()] || foundCallback['other'] || foundCallback['_'] || foundCallback['all'] || foundCallback['any'];
+		let foundCallbackMethod = foundCallback[req.method.toLowerCase()] || foundCallback['_'] ||
+			foundCallback['other'] || foundCallback['else'] || foundCallback['all'] || foundCallback['any'];
 
 		return foundCallbackMethod !== undefined ? foundCallbackMethod : null;
 	}
@@ -70,6 +71,15 @@ const onRequest = (req, res) => {
 				let currentRoutePart = routeParts[j];
 
 				if (currentRoutePart !== undefined && currentRoutePart[0] === ':') {
+					if (currentRoutePart[1] === ':') {
+						let endOfPath = [''];
+
+						for (; j < pathPartsLen; j++) endOfPath.push(pathParts[j]);
+
+						params[currentRoutePart.substr(2)] = endOfPath.join('/');
+						break;
+					}
+
 					params[currentRoutePart.substr(1)] = currentPathPart;
 					continue;
 				} else if (pathParts[j] === routeParts[j]) continue;
@@ -95,7 +105,6 @@ const onRequest = (req, res) => {
 	if (typeof toRun === 'function') {
 		req.params = foundParams;
 		toRun(req, res);
-		console.log(req.params, req.query);
 	}
 };
 
