@@ -94,8 +94,8 @@ const router = require('just-router');
 
 ```js
 let routeList = {
-	route: routeHandleFunction,
-	route2: routeHandleObject
+	'/route': routeHandleFunction,
+	'/route/2': routeHandleObject
 }
 ```
 
@@ -129,7 +129,7 @@ let routeList = {
 let routeHandleObject = {
 	get: routeHandleFunction,
 	post: routeHandleFunction2,
-	other: routeHandleFunction3    // aliases: all || any || else || _
+	other: routeHandleFunction3  // aliases: all || any || else || _
 }
 
 function routeHandleFunction(req, res) {}
