@@ -6,7 +6,7 @@ const http = require('http');
 const router = require('just-router');
 
 http.createServer(router({
-  '/': (req, res) => res.send('hello world!')
+  '/': (req, res) => res.end('hello world!')
 })).listen(80);
 ```
 
