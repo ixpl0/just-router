@@ -1,6 +1,6 @@
 {
   "name": "just-router",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Compact, fast and simple node js router with no dependencies",
   "main": "index.js",
   "scripts": {
