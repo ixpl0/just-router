@@ -53,13 +53,15 @@ const onRequest = (req, res) => {
 	} else {
 		let routes = Object.keys(routeMap);
 		let routesLen = routes.length;
+		let pathParts = path.split('/');
+		pathParts[pathParts.length - 1] === '' && pathParts.pop();
+		pathParts[0] === '' && pathParts.shift();
 
-		let pathParts = path.match(/[^\/]+/g);
 		let pathPartsLen = pathParts.length;
 
 		for (let i = 0; i < routesLen; i++) {
 			let route = routes[i];
-			let routeParts = route.match(/[^\/]+/g);
+			let routeParts = route.split('/');
 			let routeFound = true;
 			let params = {};
 
@@ -109,11 +111,21 @@ const onRequest = (req, res) => {
 };
 
 const onNewRoutes = newRoutes => {
-	routeMap = newRoutes;
-	rootRoute = routeMap['/'];
-	othersRoute = routeMap[''];
-	delete routeMap['/'];
-	delete routeMap[''];
+	routeMap = {};
+
+	rootRoute = newRoutes['/'];
+	othersRoute = newRoutes[''];
+	delete newRoutes['/'];
+	delete newRoutes[''];
+
+	for (let route in newRoutes) {
+		let routeValue = newRoutes[route];
+
+		route[0] === '/' && (route = route.substr(1));
+		route[route.length - 1] === '/' && (route = route.splice(0, -1));
+
+		routeMap[route] = routeValue;
+	}
 
 	return onRequest;
 };

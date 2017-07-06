@@ -136,6 +136,37 @@ function routeHandleFunction(req, res) {}
 ```
 If the methods did not match, then the `other` `routeHandleFunction` is called. `other` keyword has aliases: `all`, `any`, `else` and `_`
 
+## Match examples
+
+### `/user/:id/message/:mId`
+
+|OK 👍|BAD IDEA 👎|
+|---|---|
+|**`/user/1/message/2`**|`/user/1/message/`|
+|**`/user/1/message/2/`**|`/user/1//message/2`|
+|**`/user//message//`**|`/user/message/1`|
+|**`/user/_/message/2?lol`**|`/user/1/message/2/3`|
+|**`/user/:id/message//?c=5&x`**|`/user/:id/message/?c=5&x`|
+
+### `/api/::id`
+
+|OK 👍|BAD IDEA 👎|
+|---|---|
+|**`/api/1`**|`/api/`|
+|**`/api/////1//2`**|`/api`|
+|**`/api/a/b/c?lol=1&x=`**|`/api?1`|
+|**`/api//?1`**|`/api/?1`|
+|**`/api/1?1`**||
+
+### `/id`
+
+|OK 👍|BAD IDEA 👎|
+|---|---|
+|**`/id`**|`/id/id`|
+|**`/id/`**|`/?id`|
+|**`/id?id`**|`/id//`|
+|**`/id/?ea`**||
+
 ## Philosophy
 
 `just-router`
